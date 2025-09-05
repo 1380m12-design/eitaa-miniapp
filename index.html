@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="utf-8">
+  <title>برنامک تستی ایتا</title>
+  <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background: #f5f5f5;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #2ea6e5;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1b8fc4;
+    }
+  </style>
+</head>
+<body>
+  <h1>👋 سلام به برنامک من در ایتا</h1>
+  <p>روی دکمه کلیک کن:</p>
+  <button onclick="sayHi()">سلام</button>
+
+  <script>
+    function sayHi() {
+      // گرفتن اطلاعات کاربر از ایتا
+      const user = Eitaa.WebApp.initDataUnsafe.user;
+      alert("سلام " + (user?.first_name || "کاربر ایتا"));
+    }
+
+    // وقتی برنامک آماده شد
+    Eitaa.WebApp.ready();
+  </script>
+</body>
+</html>
