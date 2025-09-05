@@ -10,27 +10,43 @@
       text-align: center;
       padding: 20px;
       background: #f5f5f5;
+      direction: rtl;
     }
     h1 { color: #2ea6e5; }
-    select, button {
-      font-size: 18px;
-      margin: 10px;
-      padding: 10px;
-      border-radius: 10px;
+    label {
+      display: block;
+      margin-top: 15px;
+      font-size: 16px;
+    }
+    select, input, button {
+      font-size: 16px;
+      margin-top: 5px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 200px;
     }
     button {
       background: #2ea6e5;
       color: white;
       border: none;
       cursor: pointer;
+      margin-top: 20px;
     }
     button:hover {
       background: #1b8fc4;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
     }
   </style>
 </head>
 <body>
   <h1>🎬 رزرو بلیط سینما</h1>
+
+  <p id="userinfo">در حال بارگذاری اطلاعات کاربر...</p>
 
   <label for="movie">فیلم:</label>
   <select id="movie">
@@ -46,16 +62,30 @@
     <option>20:00</option>
   </select>
 
-  <br><br>
+  <label for="phone">شماره موبایل:</label>
+  <input type="text" id="phone" placeholder="09xxxxxxxxx">
+
   <button onclick="reserve()">رزرو کن</button>
 
   <p id="result"></p>
 
   <script>
+    // گرفتن اطلاعات کاربر از initDataUnsafe
+    const user = Eitaa.WebApp.initDataUnsafe.user;
+    const userInfoElement = document.getElementById("userinfo");
+    if (user) {
+      userInfoElement.innerText =
+        "👤 کاربر: " +
+        (user.first_name || "") + " " + (user.last_name || "") +
+        (user.username ? " (@" + user.username + ")" : "");
+    } else {
+      userInfoElement.innerText = "❌ اطلاعات کاربر در دسترس نیست.";
+    }
+
     function reserve() {
       const movie = document.getElementById("movie").value;
       const time = document.getElementById("time").value;
-      const user = Eitaa.WebApp.initDataUnsafe.user;
+      const phone = document.getElementById("phone").value;
 
       fetch("/reserve", {
         method: "POST",
@@ -63,6 +93,8 @@
         body: JSON.stringify({
           user_id: user?.id,
           name: user?.first_name,
+          username: user?.username,
+          phone: phone,
           movie: movie,
           time: time
         })
@@ -70,9 +102,13 @@
       .then(res => res.json())
       .then(data => {
         document.getElementById("result").innerText = data.message;
+      })
+      .catch(err => {
+        document.getElementById("result").innerText = "❌ خطا در رزرو بلیط";
       });
     }
 
+    // آماده‌سازی برنامک
     Eitaa.WebApp.ready();
   </script>
 </body>
