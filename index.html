@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-  <meta charset="utf-8">
-  <title>برنامک تستی ایتا</title>
+  <meta charset="UTF-8">
+  <title>رزرو بلیط سینما</title>
   <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
   <style>
     body {
       font-family: Tahoma, sans-serif;
       text-align: center;
-      padding: 40px;
+      padding: 20px;
       background: #f5f5f5;
     }
-    button {
-      padding: 10px 20px;
+    h1 { color: #2ea6e5; }
+    select, button {
       font-size: 18px;
-      border: none;
+      margin: 10px;
+      padding: 10px;
       border-radius: 10px;
+    }
+    button {
       background: #2ea6e5;
       color: white;
+      border: none;
       cursor: pointer;
     }
     button:hover {
@@ -26,18 +30,49 @@
   </style>
 </head>
 <body>
-  <h1>👋 سلام به برنامک من در ایتا</h1>
-  <p>روی دکمه کلیک کن:</p>
-  <button onclick="sayHi()">سلام</button>
+  <h1>🎬 رزرو بلیط سینما</h1>
+
+  <label for="movie">فیلم:</label>
+  <select id="movie">
+    <option>بتمن</option>
+    <option>سوپرمن</option>
+    <option>انتقام‌جویان</option>
+  </select>
+
+  <label for="time">سانس:</label>
+  <select id="time">
+    <option>14:00</option>
+    <option>17:00</option>
+    <option>20:00</option>
+  </select>
+
+  <br><br>
+  <button onclick="reserve()">رزرو کن</button>
+
+  <p id="result"></p>
 
   <script>
-    function sayHi() {
-      // گرفتن اطلاعات کاربر از ایتا
+    function reserve() {
+      const movie = document.getElementById("movie").value;
+      const time = document.getElementById("time").value;
       const user = Eitaa.WebApp.initDataUnsafe.user;
-      alert("سلام " + (user?.first_name || "کاربر ایتا"));
+
+      fetch("/reserve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: user?.id,
+          name: user?.first_name,
+          movie: movie,
+          time: time
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("result").innerText = data.message;
+      });
     }
 
-    // وقتی برنامک آماده شد
     Eitaa.WebApp.ready();
   </script>
 </body>
